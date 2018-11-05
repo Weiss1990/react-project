@@ -16,6 +16,7 @@ class ItemsList extends Component {
 
   componentDidMount() {
       this.getData();
+      console.log('11');
   }
 
    getData = () => {
