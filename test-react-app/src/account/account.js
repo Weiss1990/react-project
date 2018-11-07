@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class Account extends Component {
 
@@ -10,31 +11,26 @@ class Account extends Component {
     console.log(this.props.info);
   }
 
-  returnToList = (e) => {
-
-    e.preventDefault();
-    this.props.returnBack();
-  }
-
   renderTable() {
 
     let info = this.props.info;
-    return Object.entries(info).map(([key, value]) => {
+    return <table>{
+        Object.entries(info).map(([key, value]) => {
       return (
+
           <tr>
             <td>{key}</td>
               <td>{value}</td>
           </tr>
       )
-    })
+    })}
+    </table>
   }
 
   render() {
     return <div>
-      <a href="#" onClick={this.returnToList}>back</a>
-      <table>
+        <Link to={"/items-list"}>back</Link>
           {this.renderTable()}
-      </table>
     </div>;
   }
 }

@@ -1,74 +1,66 @@
 import React, { Component } from 'react';
 import Account from '../account';
+import { Route, Link } from 'react-router-dom';
 
 class ItemsList extends Component {
 
-  constructor(props) {
-      super(props);
-      this.state = {
-        data: [],
-        isOpen: false,
-        activeItemId: null,
-        selectedItemInfo: {},
-        responseSuccess: false
-      };
-  }
+    constructor(props) {
+        super(props);
+        this.state = {
+            data: [],
+            isOpen: false,
+            activeItemId: null,
+            selectedItemInfo: {},
+            responseSuccess: false
+        };
+    }
 
-  componentDidMount() {
-      this.getData();
-      console.log('111');
-  }
+    componentDidMount() {
+        this.getData();
+    }
 
-   getData = () => {
+    getData = () => {
 
-       fetch(`https://api.coinmarketcap.com/v1/ticker/?limit=10`)
-           .then(res => res.json())
-           .then(json => {
-               this.setState({ data: json, responseSuccess: true });
-           }).catch(err => {
-           this.setState({ responseSuccess: false });
-       })
-  }
+        fetch(`https://api.coinmarketcap.com/v1/ticker/?limit=10`)
+            .then(res => res.json())
+            .then(json => {
+                this.setState({ data: json, responseSuccess: true });
+            }).catch(err => {
+            this.setState({ responseSuccess: false });
+        })
+    }
 
-  showItemInfo = (id) => {
+    showItemInfo = (id) => {
 
-      let data = this.state.data;
-      let selectedData = data.find(item => item.id === id);
+        let data = this.state.data;
 
-      this.setState({
-          activeItemId: id,
-          selectedItemInfo: selectedData
-      })
-  }
+        return data.find(item => item.id === id);
+    }
 
-  showList = () => {
-      this.setState({
-          activeItemId: null,
-          selectedItemInfo: {}
-      })
-  }
+    renderList = () => {
 
-  renderList = () => {
+        let state = this.state;
 
-      let state = this.state;
+        return (
+            <ul>
+                {state.data.map(item => <li key={item.id}><Link to={`/items-list/item/${item.id}`}>{item.name}</Link></li>)}
+            </ul>);
 
-      return state.responseSuccess ? state.data.map(item => <li key={item.id} onClick={() => this.showItemInfo(item.id)}>{item.name}</li>) :
-          (<div>during some error we cannot show data!</div>)
-  }
+    }
 
+    renderErrorMessage = () => {
 
-  render() {
+        return (<div>during some error we cannot show data!</div>)
+    }
 
-    let listOfItemsTemplate = (<div>
-      <ul>
-          {this.renderList()}
-      </ul>
-    </div>);
-
-    let itemDetailsTemplate = (<Account info={this.state.selectedItemInfo} returnBack={this.showList}/>);
-
-    return this.state.activeItemId ? itemDetailsTemplate : listOfItemsTemplate;
-  }
+    render() {
+        return <div>
+            {this.state.responseSuccess ? this.renderList() : this.renderErrorMessage()}
+            <Route path={"/items-list/item/:id"} render={(props) => {
+                const detailInfo = this.showItemInfo(props.match.params.id);
+                return <Account {...props} info={detailInfo}/>}}/>
+        </div>
+    }
 }
 
 export default ItemsList;

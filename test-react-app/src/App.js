@@ -11,8 +11,9 @@ class App extends Component {
       <Router>
         <div className="App">
           <Navigation />
+          <Route path="/" exact component={ItemsList} />
           <Route path="/items-list" component={ItemsList} />
-          <Route path="/my-form" component={myForm} />
+          <Route path="/my-form" exact component={myForm} />
         </div>
       </Router>
     );
